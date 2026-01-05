@@ -397,15 +397,24 @@
       downloadBlob(name, blob);
       setStatus('Esportato JSON.');
     }
-    function exportHTML(){
-      const json = JSON.stringify(getState(), null, 2).replaceAll('</script>', '<\\/script>');
-      const html = `<!doctype html><html lang="it"><head><meta charset="utf-8"/><title>Mappa esportata</title></head>
-<body><h3>Mappa esportata</h3><script id="popplet_export_data" type="application/json">\n${json}\n</script></body></html>`;
-      const blob = new Blob([html], {type:'text/html;charset=utf-8'});
-      const name = 'mappa_' + new Date().toISOString().slice(0,19).replaceAll(':','-') + '.html';
-      downloadBlob(name, blob);
-      setStatus('Esportato HTML.');
-    }
+   function exportHTML(){
+  const json = JSON.stringify(getState(), null, 2).replaceAll('</script>', '<\\/script>');
+  const html =
+    '<!doctype html><html lang="it"><head><meta charset="utf-8"/>' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1"/>' +
+    '<title>Mappa esportata</title></head><body>' +
+    '<h3>Mappa esportata</h3>' +
+    '<p>Importala nell’app con “Importa”.</p>' +
+    '<script id="popplet_export_data" type="application/json">' +
+    '\\n' + json + '\\n' +
+    '</script></body></html>';
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const name = 'mappa_' + new Date().toISOString().slice(0,19).replaceAll(':','-') + '.html';
+  downloadBlob(name, blob);
+  setStatus('Esportato HTML.');
+}
+
     function parseImportedText(text){
       const t = (text||'').trim();
       if (t.startsWith('{') || t.startsWith('[')) return JSON.parse(t);
