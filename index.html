@@ -460,37 +460,31 @@
     setStatus("Esportato JSON.");
   }
 
-  function exportHTML() {
-    var json = JSON.stringify(getState(), null, 2).split("</script>").join("<\\/script>");
-    var parts = [
-      "<!doctype html><html lang=\"it\"><head>",
-      "<meta charset=\"utf-8\"/>",
-      "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/>",
-      "<title>Mappa esportata</title>",
-      "</head><body>",
-      "<h3>Mappa esportata</h3>",
-      "<p>Importa questo file nell'app con il pulsante Importa.</p>",
-      "<script id=\"popplet_export_data\" type=\"application/json\">",
-      "\n", json, "\n",
-      "</script>",
-      "</body></html>"
-    ];
-    var html = parts.join("");
-    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
-    var name = "mappa_" + new Date().toISOString().slice(0,19).split(":").join("-") + ".html";
-    downloadBlob(name, blob);
-    setStatus("Esportato HTML.");
-  }
+ function exportHTML() {
+  var state = JSON.stringify(getState(), null, 2);
 
-  function parseImportedText(text) {
-    var t = (text || "").trim();
-    if (t.charAt(0) === "{" || t.charAt(0) === "[") return JSON.parse(t);
+  var html =
+    '<!doctype html>' +
+    '<html lang="it">' +
+    '<head>' +
+    '<meta charset="utf-8"/>' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1"/>' +
+    '<title>Mappa esportata</title>' +
+    '</head>' +
+    '<body>' +
+    '<h3>Mappa esportata</h3>' +
+    '<p>Apri questo file e importalo nell\'app.</p>' +
+    '<script type="application/json" id="popplet_export_data">' +
+    state.replace(/<\/script>/gi, '<\\/script>') +
+    '</script>' +
+    '</body>' +
+    '</html>';
 
-    var re = /<script[^>]*id=["']popplet_export_data["'][^>]*type=["']application\/json["'][^>]*>([\s\S]*?)<\/script>/i;
-    var m = text.match(re);
-    if (!m) throw new Error("File non riconosciuto");
-    return JSON.parse(m[1]);
-  }
+  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  var name = 'mappa_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.html';
+  downloadBlob(name, blob);
+  setStatus('Esportato HTML.');
+}
 
   function applyState(state) {
     if (!state || !state.pops || !state.links) throw new Error("Dati incompleti");
