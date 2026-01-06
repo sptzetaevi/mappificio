@@ -397,11 +397,11 @@
       downloadBlob(name, blob);
       setStatus('Esportato JSON.');
     }
-    function exportHTML(){
+ function exportHTML(){
   // NIENTE replaceAll (può creare casini con incolli/encoding): usiamo split/join
   const json = JSON.stringify(getState(), null, 2).split("</script>").join("<\\/script>");
 
-  // Costruzione HTML SOLO ASCII (niente virgolette “ ”, niente apostrofi strani)
+  // Costruzione HTML SOLO ASCII
   const parts = [
     "<!doctype html><html lang=\"it\"><head>",
     "<meta charset=\"utf-8\"/>",
@@ -421,8 +421,10 @@
   const name = "mappa_" + new Date().toISOString().slice(0,19).split(":").join("-") + ".html";
   downloadBlob(name, blob);
   setStatus("Esportato HTML.");
-    }
-  window.exportHTML = exportHTML;
+}
+
+window.exportHTML = exportHTML;
+
     function parseImportedText(text){
       const t = (text||'').trim();
       if (t.startsWith('{') || t.startsWith('[')) return JSON.parse(t);
