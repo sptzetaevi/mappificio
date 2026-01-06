@@ -463,7 +463,6 @@
 function exportHTML() {
   var state = JSON.stringify(getState(), null, 2);
 
-  // Mettiamo il JSON in un TEXTAREA per evitare qualsiasi problema con </script>
   var html =
     '<!doctype html>' +
     '<html lang="it">' +
@@ -485,6 +484,22 @@ function exportHTML() {
   var name = "mappa_" + new Date().toISOString().slice(0,19).replace(/:/g,'-') + ".html";
   downloadBlob(name, blob);
   setStatus("Esportato HTML.");
+}
+  
+function parseImportedText(text) {
+  var t = (text || "").trim();
+
+  // Caso 1: JSON puro
+  if (t.charAt(0) === "{" || t.charAt(0) === "[") {
+    return JSON.parse(t);
+  }
+
+  // Caso 2: HTML esportato (textarea nascosta)
+  var re = /<textarea[^>]*id=["']popplet_export_data["'][^>]*>([\s\S]*?)<\/textarea>/i;
+  var m = text.match(re);
+  if (!m) throw new Error("File non riconosciuto");
+
+  return JSON.parse(m[1]);
 }
 
   function applyState(state) {
